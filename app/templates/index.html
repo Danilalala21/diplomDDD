@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}{% endblock title%}
+
+{% block content %}
+        <div class='cards'>
+            <div class='container'>
+                <div class='cards-holder'>
+                    <div class='card'>
+                        <div class='card-image'>
+                            <img src="{{ url_for('static', filename='img/card.png') }}" alt=" " class="card-img">
+                        </div>
+                        <div class='card-title'>
+                            Магическая  <span>Атмосфера</span>
+                        </div>
+                        <div class='card-desc'>В нашем заведении царит магическая атмосфера наполненная вкусными ароматами</div>
+                    </div>
+                    <div class='card'>
+                        <div class='card-image'>                            
+                            <img src="{{ url_for('static', filename='img/card.png') }}" alt=" " class="card-img">
+                        </div>
+                        <div class='card-title'>
+                            Лучшее качество <span>Еды</span>
+                        </div>
+                        <div class='card-desc'>Качество нашей Еды - отменное!</div>
+                    </div>
+                    <div class='card'>
+                        <div class='card-image'>
+                            <img src="{{ url_for('static', filename='img/card.png') }}" alt=" " class="card-img">
+                        </div>
+                        <div class='card-title'>
+                            Недорогая  <span>Еда</span>
+                        </div>
+                        <div class='card-desc'>Стоимость нашей Еды зависит только от ее количества. Качество всегда на высоте!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='galery'>
+            <div class='container'>
+                <div class='galery-title'>
+                    Галерея <span>Блюд</span>
+                </div>
+                <div class='galery-content'>
+                    <div class='galery-left'>
+                        <div class='galery-up'>
+                            <img src="{{ url_for('static', filename='img/10.jpg') }}" alt=" " class="img-gal high">
+                        </div>
+                        <div class='galery-down'>
+                            <img src="{{ url_for('static', filename='img/20.jpg') }}" alt=" " class="img-gal">
+                            <img src="{{ url_for('static', filename='img/30.jpg') }}" alt=" " class="img-gal">
+                        </div>
+                    </div>
+                    <div class='galery-right'>
+                        <div class='galery-up'>
+                            <img src="{{ url_for('static', filename='img/20.jpg') }}" alt=" " class="img-gal">
+                            <img src="{{ url_for('static', filename='img/30.jpg') }}" alt=" " class="img-gal">
+                        </div>
+                        <div class='galery-down'>
+                            <img src="{{ url_for('static', filename='img/10.jpg') }}" alt=" " class="img-gal high">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock content%}

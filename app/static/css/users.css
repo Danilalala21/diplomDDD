@@ -1,0 +1,39 @@
+/* Стили для таблицы */
+.table {
+    width: 100%; /* Ширина таблицы на 100% */
+    margin-bottom: 1rem; /* Отступ снизу */
+    background-color: transparent; /* Прозрачный фон */
+}
+
+/* Стили для заголовков столбцов */
+.table th,
+.table td {
+    padding: 0.75rem; /* Внутренний отступ */
+    vertical-align: top; /* Выравнивание по верхнему краю */
+    border-top: 1px solid #dee2e6; /* Граница сверху */
+}
+
+/* Стили для строк */
+.table tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9; /* Цвет фона для нечетных строк */
+}
+
+/* Стили при наведении */
+.table tbody tr:hover {
+    background-color: #f5f5f5; /* Цвет фона при наведении */
+}
+
+/* Стили для таблицы на мобильных устройствах */
+@media (max-width: 576px) {
+    .table-responsive {
+        overflow-x: auto; /* Горизонтальная прокрутка */
+        -webkit-overflow-scrolling: touch; /* Поддержка прокрутки на iOS */
+    }
+    .table-responsive > .table {
+        margin-bottom: 0; /* Убираем отступ снизу */
+    }
+    .table-responsive > .table td,
+    .table-responsive > .table th {
+        white-space: nowrap; /* Предотвращение переноса слов */
+    }
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!-- {{ url_for('static', filename='') }}-->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
+              rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Tinos:wght@400;700&display=swap"
+              rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital@1&display=swap"
+              rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Про Рыбу</title>
+    </head>
+    <body>
+        <div class='header'>
+            <div class='container'>
+                <div class='header-line'>
+                    <div class='header-logo'>
+                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt=" ">
+
+                    </div>
+                    <div class='nav'>
+                        <a class='nav-item' href="/">ГЛАВНАЯ</a>
+                        <a class='nav-item' href="/menu">МЕНЮ</a>
+                        <a class='nav-item' href="/about">О НАС</a>
+                        <a class='nav-item' href="/news">НОВОСТИ </a>
+                        <a class='nav-item' href="/login">ВХОД</a>
+                    </div>
+                    <div class='cart'>
+                        <a href="/cart">
+                            <img src="{{ url_for('static', filename='img/cart.png') }}" alt=" " class="cart-img">
+                        </a>
+                    </div>
+                    <div class='phone'>
+                        <div class='phone-holder'>
+                            <div class='phone-img'>
+                            <img src="{{ url_for('static', filename='img/phone.png') }}" alt=" ">
+
+                            </div>
+                            <div class='number'>
+                                <a class='num' href='#'>+7(917)-313-37-14</a>
+                            </div>
+                        </div>
+                        <div class='phone-text'>
+                            Свяжитесь с нами для
+                            <br>
+                            бронирования
+                        </div>
+                    </div>
+                    <div class='btn'>
+                        <a class='button' href='/cart'>КОРЗИНА</a>
+                    </div>
+                    <div class='burger-menu'>
+                        <button id='burger'>
+                            <img src="{{ url_for('static', filename='img/burger-img.png') }}" alt=" " >
+                        </button>
+                    </div>
+                </div>
+                <div class='header-down'>
+                    <div class='header-title'>
+                        Добро пожаловать в
+                        <div class='header-subtitle'>Про Рыбу</div>
+                        <div class='header-suptitle'>ДОМ ЛУЧШЕЙ ЕДЫ</div>
+                        <div class='header-bth'>
+                            <a href='#' class='header-button'>VIEW MENU</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% for cat, msg in get_flashed_messages(True) %}
+            <div class="flash {{ cat }}">
+                <h3>{{ msg }}</h3>
+                <span class="close-button">✕</span>
+            </div>
+        {% endfor %}
+        {% block content %}
+        {% endblock content %}
+        <script>
+            // Функция для скрытия сообщений Flash при нажатии на кнопку закрытия
+            function hideFlashMessage(flashMessage) {
+               flashMessage.style.display = 'none';
+           }
+        
+           // Функция для добавления обработчиков событий на кнопки закрытия
+           function addCloseButtonHandlers() {
+               var closeButtons = document.getElementsByClassName('close-button');
+               for (var i = 0; i<closeButtons.length; i++) {
+                   var closeButton = closeButtons[i];
+                   closeButton.addEventListener('click', function () {
+                       hideFlashMessage(this.parentNode);
+                   });
+               }
+           }
+        
+           // Функция для скрытия сообщений Flash после определенного времени
+           /*function hideFlashMessages() {
+               var flashMessages = document.getElementsByClassName('flash');
+               for (var i = 0; i < flashMessages.length; i++) {
+                   var flashMessage = flashMessages[i];
+                   setTimeout(function () {
+                       flashMessage.style.display = 'none';
+                   }, 15000); // Изменить значение 5000 на нужное вам время в миллисекундах (здесь 5 секунд)
+               }
+           }*/
+        
+           // Вызов функции для скрытия сообщений Flash при загрузке страницы
+           window.onload = function () {
+               //hideFlashMessages();
+               addCloseButtonHandlers();
+           };
+        </script>
+        <div class='footer'>Про Рыбу</div>
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    </body>
+</html>
