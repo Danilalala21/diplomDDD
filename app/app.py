@@ -193,6 +193,18 @@ def profile():
         raise InternalServerError
 
 
+@app.route('/orders')
+@login_required
+@user_check_password
+def orders():
+    try:
+        return render_template(
+            'orders.html', page='orders')
+    except Exception as ex:
+        logging.error(ex)
+        raise InternalServerError
+    
+
 @app.route('/users')
 @admin_required
 @user_check_password

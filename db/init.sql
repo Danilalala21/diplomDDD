@@ -1,9 +1,9 @@
 -- Insert users
 INSERT INTO public.users (email, password, lastname, firstname, password_changed, status, role)
 VALUES
-('admin@example.com', 'pbkdf2:sha256:260000$80VZTW7RYOnHqqW3$09209afff6f694733175063c16c8d865f820c1455fb668d3244838dc192f70ba', 'Admin', 'User', true, true, 1),
-('customer@example.com', 'pbkdf2:sha256:260000$80VZTW7RYOnHqqW3$09209afff6f694733175063c16c8d865f820c1455fb668d3244838dc192f70ba', 'Customer', 'User', true, true, 2),
-('staff@example.com', 'pbkdf2:sha256:260000$80VZTW7RYOnHqqW3$09209afff6f694733175063c16c8d865f820c1455fb668d3244838dc192f70ba', 'Staff', 'User', true, true, 3);
+('admin@example.com', 'pbkdf2:sha256:260000$tv0pQCYL9O6NB2CL$ea965ce8d72b15fe80d7dbcd3f0d8f51143c1f03fef266a7bd930df1b3b887c5', 'Admin', 'User', true, true, 1),
+('customer@example.com', 'pbkdf2:sha256:260000$tv0pQCYL9O6NB2CL$ea965ce8d72b15fe80d7dbcd3f0d8f51143c1f03fef266a7bd930df1b3b887c5', 'Customer', 'User', true, true, 2),
+('staff@example.com', 'pbkdf2:sha256:260000$tv0pQCYL9O6NB2CL$ea965ce8d72b15fe80d7dbcd3f0d8f51143c1f03fef266a7bd930df1b3b887c5', 'Staff', 'User', true, true, 3);
 
 
 -- Insert orders

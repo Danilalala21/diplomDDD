@@ -2,5 +2,46 @@
 {% block title %}{% endblock title%}
 
 {% block content %}
-
+    <!--/inner_banner-->
+    <div class="inner_banner"></div>
+    <!--//inner_banner-->
+    <!-- /inner_content -->
+    <div class="banner_bottom">
+        <div class="container">
+            <div class="tittle_head">
+                <h3 class="tittle">
+                    <span>Profile</span>
+                </h3>
+            </div>
+            <div class="mail_form">
+                <div class="inner_sec_info_wthree_agile">
+                    <div class="profile_info">
+                        <p><strong>Email:</strong> {{ current_user.email }}</p>
+                        <p><strong>Last Name:</strong> {{ current_user.lastname }}</p>
+                        <p><strong>First Name:</strong> {{ current_user.firstname }}</p>
+                        <p><strong>Role:</strong> {{ current_user.role }}</p>
+                        <p><strong>Last Activity:</strong> {{ current_user.last_activity }}</p>
+                        <p><strong><a href="{{ url_for('change_password')}}">Change password</a></strong></p>
+                    </div>
+                </div>
+            </div>
+            <div class="tittle_head">
+                <h3 class="tittle">
+                    <span>My orders</span>
+                </h3>
+            </div>
+            <div class="mail_form">
+                <div class="mail_form">
+                    <div class="inner_sec_info_wthree_agile">
+                        {% for order in orders %}
+                        <div class="profile_info">
+                           {{order}}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content%}
