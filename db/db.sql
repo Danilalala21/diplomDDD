@@ -1,9 +1,9 @@
-CREATE DATABASE cafe
-    WITH
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    CONNECTION LIMIT = -1
-    IS_TEMPLATE = False;
+-- CREATE DATABASE cafe
+--     WITH
+--     OWNER = postgres
+--     ENCODING = 'UTF8'
+--     CONNECTION LIMIT = -1
+--     IS_TEMPLATE = False;
 
 BEGIN;
 
@@ -176,3 +176,26 @@ ALTER TABLE IF EXISTS public.cart
     NOT VALID;
 
 END;
+
+-- Insert roles
+INSERT INTO public.roles (role) VALUES
+('admin'),
+('customer'),
+('staff');
+
+
+-- Insert order statuses
+INSERT INTO public.order_status (status) VALUES
+('Pending'),
+('Confirmed'),
+('Completed'),
+('Cancelled');
+
+
+-- Insert menu items with fish
+INSERT INTO public.menu (name, description, rate, price) VALUES
+('Grilled Salmon', 'Fresh salmon fillet grilled to perfection', '4.6', 12.99),
+('Fish and Chips', 'Classic dish of battered fish served with fries', '4.4', 9.99),
+('Fish Tacos', 'Soft tortillas filled with crispy fish, salsa, and cabbage slaw', '4.3', 8.99),
+('Fish Curry', 'Aromatic curry with tender pieces of fish and fragrant spices', '4.5', 11.99),
+('Seafood Pasta', 'Pasta tossed in a creamy sauce with shrimp, scallops, and fish', '4.7', 14.99);

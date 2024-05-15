@@ -31,8 +31,18 @@
                         <a class='nav-item' href="/">ГЛАВНАЯ</a>
                         <a class='nav-item' href="/menu">МЕНЮ</a>
                         <a class='nav-item' href="/about">О НАС</a>
-                        <a class='nav-item' href="/news">НОВОСТИ </a>
-                        <a class='nav-item' href="/login">ВХОД</a>
+                        {% if current_user and current_user.is_authenticated%}
+                            <a class='nav-item' href="/logout">ВЫХОД</a>
+                            <a class='nav-item' href="/profile">КАБИНЕТ</a>
+                            {% if current_user.get_role() =='admin' %}
+                            <a class='nav-item' href="/login">ПОЛЬЗОВАТЕЛИ</a>
+                            {% endif%}
+                            {% if current_user.get_role() in ['admin', 'stuff'] %}
+                            <a class='nav-item' href="/login">Заказы</a>
+                            {% endif%}
+                        {%else%}
+                            <a class='nav-item' href="/login">ВХОД</a>
+                            {%endif%}
                     </div>
                     <div class='cart'>
                         <a href="/cart">

@@ -831,8 +831,6 @@ body {
 .login-form {
     width: 350px;
     padding: 30px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
 }
 
 .login-form h1 {
@@ -861,16 +859,12 @@ body {
     font-size: 0.8rem;
 }
 
-/* .btn {
-    width: 100%;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-} */
+.block_center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .btn:hover {
-    background-color: #0069d9;
+    background-color: orangered;
 }
