@@ -40,7 +40,7 @@
                     {{ menu_item.description | safe }}
                 </div>
                 <div class='menu-button'>
-                    <a href='#' class='menu-btn'>Добавить</a>
+                    <button onclick="addToCart({{ menu_item.id }}, {{ menu_item.price }})">Добавить</button>
                 </div>
             </div>
             {% endfor %}
@@ -59,4 +59,27 @@
         </div>
     </div>
 </div>
+
+<script>
+    function addToCart(foodId, price) {
+        fetch('/add_to_cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ food_id: foodId, price: price })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Added to cart successfully!');
+            } else {
+                alert('Failed to add to cart.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    </script>
 {% endblock content %}

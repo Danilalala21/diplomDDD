@@ -1,5 +1,5 @@
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
-from flask import Flask, render_template, redirect, request, url_for, flash,session
+from flask import Flask, jsonify, render_template, redirect, request, url_for, flash,session
 import db as db
 import models as m
 import constant as const
@@ -163,6 +163,30 @@ def menu():
     try:
         return render_template(
             'menu.html', page='menu', menu_items=db.get_menu())
+    except Exception as ex:
+        logging.error(ex)
+        raise InternalServerError
+
+
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    food_id = request.json.get('food_id')
+    price = request.json.get('price')
+    try:
+        result =  db.add_food_to_cart(current_user.id, food_id, price)
+        if result:
+            return jsonify({'success': True, 'cart_id': result})
+    except Exception as ex:
+        logging.error(ex)
+        return jsonify({'success': False, 'error': str(ex)})
+
+
+@app.route('/cart')
+@login_required
+def cart():
+    try:
+        return render_template(
+            'cart.html', page='cart', cart=db.get_cart(current_user.id))
     except Exception as ex:
         logging.error(ex)
         raise InternalServerError

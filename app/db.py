@@ -224,3 +224,16 @@ def get_menu():
         return get_data("SELECT * from menu;")
     except Exception as ex:
         config.logging.error(ex)
+        
+
+def add_food_to_cart(user_id, food_id, price):
+    return set_data(
+            '''INSERT INTO cart ("user", food, count, summ) VALUES (%s, %s, %s, %s) RETURNING id;''', 
+            (user_id, food_id, 1, price))
+
+
+def get_cart(user_id):
+    try:
+        return get_data('SELECT * FROM cart WHERE "user" = %s;', (user_id,))
+    except Exception as ex:
+        config.logging.error(ex)
