@@ -1,92 +1,62 @@
 {% extends 'base.html' %}
+
 {% block title %}
+    Наше Меню
 {% endblock title %}
+
 {% block content %}
-    <div class='dishes'>
-        <div class='container'>
-            <div class='dishes-title'>
-                Наши <span>Блюда</span>
+<div class='dishes'>
+    <div class='container'>
+        <div class='dishes-title'>
+            Наши <span>Блюда</span>
+        </div>
+        <div class='burgers'>
+            <div class='burgers-image'>
+                <img src='{{ url_for('static', filename='img/pizza.jpg') }}' class='pizza'>
             </div>
-            <div class='burgers'>
-                <div class='burgers-image'>
-                    <img src='img/pizza.jpg' class='pizza'>
+            <div class='burgers-items'>
+                {% for dish in dishes %}
+                <div class='burger-item'>
+                    <img src="{{ url_for('static', filename=dish.image) }}" class=''>
+                    <div class='burger-text'>{{ dish.name }} -------------- {{ dish.price }} ₽</div>
                 </div>
-                <div class='burgers-items'>
-                    <div class='burger-item'>
-                        <img src="img/cezarKrev.jpg" class=''>
-                        <div class='burger-text'>Цезарь с креветками -------------- 500 ₽</div>
-                    </div>
-                    <div class='burger-item'>
-                        <img src="img/cezarKur.jpg" class=''>
-                        <div class='burger-text'>Цезарь с курицуй -------------- 400 ₽</div>
-                    </div>
-                    <div class='burger-item'>
-                        <img src="img/cezarSemga.jpg" class=''>
-                        <div class='burger-text'>Греческий -------------- 570 ₽</div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
-    <div class='menu'>
-        <div class='container'>
-            <div class='menu-title'>Наше меню</div>
-            <div class='menu-items'>
-                <div class='menu-item'>
-                    <div class='menu-image'>
-                        <img src='img/sudak.jpg' class='menu-img'>
-                    </div>
-                    <div class='menu-text'>Судак с помидорами</div>
-                    <div class='menu-subtext'>
-                        Белое филе судака приготовлено на гриле и дополнено
-                        <br>
-                        жареным луком, помидорами и свежим базиликом.
-                    </div>
-                    <div class='menu-button'>
-                        <a href='#' class='menu-btn'>Добавить</a>
-                    </div>
+</div>
+<div class='menu'>
+    <div class='container'>
+        <div class='menu-title'>Наше меню</div>
+        <div class='menu-items'>
+            {% for menu_item in menu_items %}
+            <div class='menu-item'>
+                <div class='menu-image'>
+                    <img src="{{ url_for('static', filename=menu_item.image) }}" class='menu-img'>
                 </div>
-                <div class='menu-item'>
-                    <div class='menu-image'>
-                        <img src='img/forel.jpg' class='menu-img'>
-                    </div>
-                    <div class='menu-text'>Форель запеченная</div>
-                    <div class='menu-subtext'>
-                        Радужная форель, запеченная в фольге на углях с
-                        <br>
-                        картофелем, грибами и помидорами черри в белом вине.
-                    </div>
-                    <div class='menu-button'>
-                        <a href='#' class='menu-btn'>Добавить</a>
-                    </div>
+                <div class='menu-text'>{{ menu_item.name }}</div>
+                <div class='menu-price'>{{ menu_item.price }} ₽ - {{ menu_item.rate }} rate</div>
+                <div class='menu-subtext'>
+                    {{ menu_item.description | safe }}
                 </div>
-                <div class='menu-item'>
-                    <div class='menu-image'>
-                        <img src='img/losos.jpg' class='menu-img'>
-                    </div>
-                    <div class='menu-text'>Лосось на гриле</div>
-                    <div class='menu-subtext'>
-                        Подается с соусом Беарнез, цукини, помидорами
-                        <br>
-                        помидорами конкассе и красной икрой.
-                    </div>
-                    <div class='menu-button'>
-                        <a href='#' class='menu-btn'>Добавить</a>
-                    </div>
+                <div class='menu-button'>
+                    <a href='#' class='menu-btn'>Добавить</a>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
-    <div class='cook'>
-        <div class='container'>
-            <div class='cook-title'>
-                Наши <span>Повара</span>
-            </div>
-            <div class='cook-content'>
-                <img src="{{ url_for('static', filename='img/1c.jpg') }}" alt=" ">
-                <img src="{{ url_for('static', filename='img/2c.jpg') }}" alt=" ">
-                <img src="{{ url_for('static', filename='img/3c.jpg') }}" alt=" ">
-            </div>
+</div>
+<div class='cook'>
+    <div class='container'>
+        <div class='cook-title'>
+            Наши <span>Повара</span>
+        </div>
+        <div class='cook-content'>
+            <img src="{{ url_for('static', filename='img/1c.jpg') }}" alt=" ">
+            <img src="{{ url_for('static', filename='img/2c.jpg') }}" alt=" ">
+            <img src="{{ url_for('static', filename='img/3c.jpg') }}" alt=" ">
         </div>
     </div>
+</div>
 {% endblock content %}

@@ -218,3 +218,9 @@ def history(user, action):
             (user, action, now))
     except Exception as ex:
         config.logging.error(ex)
+
+def get_menu():
+    try:
+        return get_data("SELECT * from menu;")
+    except Exception as ex:
+        config.logging.error(ex)

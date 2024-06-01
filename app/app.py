@@ -163,7 +163,8 @@ def index():
 @login_required
 def menu():
     try:
-        return render_template('menu.html', page='menu')
+        return render_template(
+            'menu.html', page='menu', menu_items=db.get_menu())
     except Exception as ex:
         logging.error(ex)
         raise InternalServerError
