@@ -185,8 +185,11 @@ def add_to_cart():
 @login_required
 def cart():
     try:
+        cart_items = db.get_cart(current_user.id) 
+        if not cart_items:
+            flash('Your cart is currently empty.', 'info')
         return render_template(
-            'cart.html', page='cart', cart=db.get_cart(current_user.id))
+            'cart.html', page='cart', cart_items=cart_items)
     except Exception as ex:
         logging.error(ex)
         raise InternalServerError

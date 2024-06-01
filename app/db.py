@@ -234,6 +234,8 @@ def add_food_to_cart(user_id, food_id, price):
 
 def get_cart(user_id):
     try:
-        return get_data('SELECT * FROM cart WHERE "user" = %s;', (user_id,))
+        return get_data('''SELECT c.id, m.name, c.count, c.summ FROM cart as c
+                        JOIN menu as m ON m.id = c.food 
+                        WHERE "user" = %s;''', (user_id,))
     except Exception as ex:
         config.logging.error(ex)
