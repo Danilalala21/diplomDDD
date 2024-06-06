@@ -221,7 +221,12 @@ def history(user, action):
 
 def get_menu():
     try:
-        return get_data("SELECT * from menu;")
+        return get_data("""
+        SELECT m.*, c.name as category_name 
+        FROM menu m
+        JOIN category c ON m.category = c.id
+        ORDER BY m.category;
+        """)
     except Exception as ex:
         config.logging.error(ex)
         

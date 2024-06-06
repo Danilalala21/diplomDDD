@@ -7,7 +7,14 @@ import functools
 from config import *
 from forms import *
 from werkzeug.exceptions import InternalServerError
+from collections import defaultdict
 
+
+def organize_menu_by_categories(menu_items):
+    categorized_menu = defaultdict(list)
+    for item in menu_items:
+        categorized_menu[item['category_name']].append(item)
+    return categorized_menu
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'key'
@@ -161,8 +168,8 @@ def index():
 @login_required
 def menu():
     try:
-        return render_template(
-            'menu.html', page='menu', menu_items=db.get_menu())
+        categorized_menu = organize_menu_by_categories(db.get_menu())
+        return render_template('menu.html', menu_items=categorized_menu)
     except Exception as ex:
         logging.error(ex)
         raise InternalServerError

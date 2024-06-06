@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS public.menu
     description text,
     rate text,
     price real,
+    category integer,
     PRIMARY KEY (id)
 );
 
@@ -96,6 +97,13 @@ CREATE TABLE IF NOT EXISTS public.cart
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS public.category
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
+    name text NOT NULL,
+    PRIMARY KEY (id)
+);
+
 ALTER TABLE IF EXISTS public.users
     ADD CONSTRAINT role FOREIGN KEY (role)
     REFERENCES public.roles (id) MATCH SIMPLE
@@ -107,6 +115,14 @@ ALTER TABLE IF EXISTS public.users
 ALTER TABLE IF EXISTS public.history
     ADD CONSTRAINT "user" FOREIGN KEY ("user")
     REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.menu
+    ADD FOREIGN KEY (category)
+    REFERENCES public.category (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -191,11 +207,12 @@ INSERT INTO public.order_status (status) VALUES
 ('Completed'),
 ('Cancelled');
 
+INSERT INTO public.category (name) VALUES ('Горячие блюда'), ('Соки'), ('Закуски') returning id;
 
 -- Insert menu items with fish
-INSERT INTO public.menu (name, description, rate, price) VALUES
-('Grilled Salmon', 'Fresh salmon fillet grilled to perfection', '4.6', 12.99),
-('Fish and Chips', 'Classic dish of battered fish served with fries', '4.4', 9.99),
-('Fish Tacos', 'Soft tortillas filled with crispy fish, salsa, and cabbage slaw', '4.3', 8.99),
-('Fish Curry', 'Aromatic curry with tender pieces of fish and fragrant spices', '4.5', 11.99),
-('Seafood Pasta', 'Pasta tossed in a creamy sauce with shrimp, scallops, and fish', '4.7', 14.99);
+INSERT INTO public.menu (name, description, rate, price, category) VALUES
+('Grilled Salmon', 'Свежий филе лосося, приготовленное до идеального состояния', '4.6', 12.99, 1),
+('Fish and Chips', 'Классическое блюдо из рыбы в кляре подаётся с картофелем фри', '4.4', 9.99, 1),
+('Fish Tacos', 'Мягкие тортильи с хрустящей рыбой, сальсой и капустным салатом', '4.3', 8.99, 1),
+('Fish Curry', 'Ароматное карри с нежными кусочками рыбы и душистыми специями', '4.5', 11.99, 1),
+('Seafood Pasta', 'Паста в сливочном соусе с креветками, морскими гребешками и рыбой', '4.7', 14.99, 1);

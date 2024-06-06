@@ -5,61 +5,102 @@
 {% endblock title %}
 
 {% block content %}
-<div class='dishes'>
+<div class='menu'>
     <div class='container'>
-        <div class='dishes-title'>
-            Наши <span>Блюда</span>
-        </div>
-        <div class='burgers'>
-            <div class='burgers-image'>
-                <img src='{{ url_for('static', filename='img/pizza.jpg') }}' class='pizza'>
-            </div>
-            <div class='burgers-items'>
-                {% for dish in dishes %}
-                <div class='burger-item'>
-                    <img src="{{ url_for('static', filename=dish.image) }}" class=''>
-                    <div class='burger-text'>{{ dish.name }} -------------- {{ dish.price }} ₽</div>
+        <div class='menu-title'>Наше меню</div>
+        <!-- Предполагается, что menu_items теперь группированы по категориям -->
+        {% for category, items in menu_items.items() %}
+        <div class='menu-category'>
+            <h3>{{ category }}</h3> <!-- Вывод названия категории -->
+            <div class='menu-items'>
+                {% for menu_item in items %}
+                <div class='menu-item'>
+                    <div class='menu-image'>
+                        <img src="{{ url_for('static', filename=menu_item.image) }}" class='menu-img'>
+                    </div>
+                    <div class='menu-text'>{{ menu_item.name }}</div>
+                    <div class='menu-price'>{{ menu_item.price }} ₽ - {{ menu_item.rate }} rate</div>
+                    <div class='menu-subtext'>
+                        {{ menu_item.description | safe }}
+                    </div>
+                    <div class='menu-button'>
+                        <button onclick="addToCart({{ menu_item.id }}, {{ menu_item.price }})">Добавить</button>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
+        {% endfor %}
     </div>
 </div>
-<div class='menu'>
-    <div class='container'>
-        <div class='menu-title'>Наше меню</div>
-        <div class='menu-items'>
-            {% for menu_item in menu_items %}
-            <div class='menu-item'>
-                <div class='menu-image'>
-                    <img src="{{ url_for('static', filename=menu_item.image) }}" class='menu-img'>
-                </div>
-                <div class='menu-text'>{{ menu_item.name }}</div>
-                <div class='menu-price'>{{ menu_item.price }} ₽ - {{ menu_item.rate }} rate</div>
-                <div class='menu-subtext'>
-                    {{ menu_item.description | safe }}
-                </div>
-                <div class='menu-button'>
-                    <button onclick="addToCart({{ menu_item.id }}, {{ menu_item.price }})">Добавить</button>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-<div class='cook'>
-    <div class='container'>
-        <div class='cook-title'>
-            Наши <span>Повара</span>
-        </div>
-        <div class='cook-content'>
-            <img src="{{ url_for('static', filename='img/1c.jpg') }}" alt=" ">
-            <img src="{{ url_for('static', filename='img/2c.jpg') }}" alt=" ">
-            <img src="{{ url_for('static', filename='img/3c.jpg') }}" alt=" ">
-        </div>
-    </div>
-</div>
-
+<style>
+    .container {
+        width: 100%; /* Устанавливает ширину контейнера */
+        max-width: 1200px; /* Максимальная ширина, чтобы контейнер не становился слишком широким на больших экранах */
+        margin: 0 auto; /* Центрирует контейнер */
+        padding: 20px; /* Добавляет отступы вокруг содержимого */
+    }
+    .menu-category h3 {
+        color: white; /* Задает белый цвет заголовкам категорий */
+        background-color: #808080; /* Синий фон для заголовков категорий */
+        padding: 10px; /* Добавляет отступ внутри заголовка */
+        margin-top: 20px; /* Добавляет верхний отступ для заголовка */
+    }
+    .menu-items {
+        display: flex; /* Использует flexbox для управления элементами меню */
+        flex-wrap: wrap; /* Позволяет элементам переноситься на новую строку */
+        gap: 20px; /* Добавляет пространство между элементами */
+    }
+    .menu-item {
+        flex: 1 1 200px; /* Задает базовый размер элемента и позволяет ему расти и сжиматься */
+        background-color: #f8f9fa; /* Светлый фон для карточек */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Добавляет тень для карточек */
+        padding: 15px; /* Отступы внутри карточек */
+        border-radius: 8px; /* Скругленные углы карточек */
+    }
+    .menu-button button {
+        background-color: #28a745; /* Зеленый фон для кнопок */
+        color: white; /* Белый текст на кнопках */
+        border: none; /* Убирает границу кнопки */
+        padding: 10px 20px; /* Отступы внутри кнопки */
+        border-radius: 5px; /* Скругление углов кнопки */
+        cursor: pointer; /* Курсор в виде указателя при наведении на кнопку */
+    }
+    .menu-button button:hover {
+        background-color: #218838; /* Темно-зеленый фон для кнопки при наведении */
+    }
+    .menu-image img {
+        width: 100%; /* Ширина изображения соответствует контейнеру */
+        height: auto; /* Высота изображения сохраняет пропорции */
+        border-radius: 8px; /* Скругленные углы изображений */
+    }
+</style>
+<style>
+    .menu-category h3 {
+        cursor: pointer; /* Делает курсор похожим на указатель, указывающий на интерактивность элемента */
+    }
+    .menu-items {
+        display: none; /* Изначально скрывает элементы меню */
+    }
+    </style>
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Добавляем обработчик событий на все заголовки категорий
+        document.querySelectorAll('.menu-category h3').forEach(function(header) {
+            header.addEventListener('click', function() {
+                // При клике на заголовок переключаем видимость следующего элемента div с классом .menu-items
+                const itemsDiv = this.nextElementSibling;
+                if (itemsDiv.style.display === 'none' || itemsDiv.style.display === '') {
+                    itemsDiv.style.display = 'flex'; // Показываем элементы меню
+                } else {
+                    itemsDiv.style.display = 'none'; // Скрываем элементы меню
+                }
+            });
+        });
+    });
+    </script>
+    
 <script>
     function addToCart(foodId, price) {
         fetch('/add_to_cart', {

@@ -31,57 +31,57 @@ class PasswordValidator:
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember me')
-    submit = SubmitField('Login')
+    email = StringField('Электронная почта', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    remember_me = BooleanField('Запомнить меня')
+    submit = SubmitField('Войти')
 
     def validate_password(self, password):
         validator = PasswordValidator(password.data)
         if not validator.is_valid_length(8):
-            raise ValidationError('Password must be at least 8 characters long')
+            raise ValidationError('Пароль должен быть не менее 8 символов')
         if not validator.has_uppercase():
-            raise ValidationError('Password must contain at least one uppercase letter')
+            raise ValidationError('Пароль должен содержать хотя бы одну заглавную букву')
         if not validator.has_lowercase():
-            raise ValidationError('Password must contain at least one lowercase letter')
+            raise ValidationError('Пароль должен содержать хотя бы одну строчную букву')
         if not validator.has_digit():
-            raise ValidationError('Password must contain at least one digit')
+            raise ValidationError('Пароль должен содержать хотя бы одну цифру')
         if not validator.has_special_character():
-            raise ValidationError('Password must contain at least one special character')
+            raise ValidationError('Пароль должен содержать хотя бы один специальный символ')
 
 class RegistrationForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    lastname = StringField('Last Name', validators=[DataRequired()])
-    firstname = StringField('First Name', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', 
+    email = StringField('Электронная почта', validators=[DataRequired(), Email()])
+    lastname = StringField('Фамилия', validators=[DataRequired()])
+    firstname = StringField('Имя', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    confirm_password = PasswordField('Подтвердите пароль', 
                                      validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
+    submit = SubmitField('Зарегистрироваться')
 
     def validate_password(self, password):
         validator = PasswordValidator(password.data)
         if not validator.is_valid_length(8) or not validator.has_uppercase() or not validator.has_lowercase() or not validator.has_digit() or not validator.has_special_character():
             raise ValidationError(
-                '''Password must meet certain requirements:\n
-                Password must be at least 8 characters long.\n
-                Password must contain at least one uppercase letter.\n
-                Password must contain at least one lowercase letter.\n
-                Password must contain at least one digit.\n
-                Password must contain at least one special character.\n''')
+                '''Пароль должен соответствовать следующим требованиям:\n
+                Пароль должен быть не менее 8 символов длиной.\n
+                Пароль должен содержать хотя бы одну заглавную букву.\n
+                Пароль должен содержать хотя бы одну строчную букву.\n
+                Пароль должен содержать хотя бы одну цифру.\n
+                Пароль должен содержать хотя бы один специальный символ.\n''')
 
 
 class ResetPasswordForm(FlaskForm):
-    old_password = PasswordField('Old password', validators=[DataRequired()])
-    new_password = PasswordField('New password', validators=[DataRequired()])
+    old_password = PasswordField('Старый пароль', validators=[DataRequired()])
+    new_password = PasswordField('Новый пароль', validators=[DataRequired()])
     confirm_new_password = PasswordField(
-        'Confirm new password', validators=[DataRequired(), EqualTo('new_password')])
-    submit = SubmitField('Change password')
+        'Подтвердите новый пароль', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Сменить пароль')
 
     def validate_new_password(self, new_password):
         validator = PasswordValidator(new_password.data)
         if not validator.is_valid_length(8) or not validator.has_uppercase() or not validator.has_lowercase() or not validator.has_digit() or not validator.has_special_character():
-            raise ValidationError('New password must meet certain requirements')
-        
+            raise ValidationError('Новый пароль должен соответствовать определенным требованиям')
+
     def validate_old_password(self, old_password_field):
         if old_password_field.data == self.new_password.data:
-            raise ValidationError('New password must be different from old password')
+            raise ValidationError('Новый пароль должен отличаться от старого')
