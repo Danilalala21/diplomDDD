@@ -244,3 +244,20 @@ def get_cart(user_id):
                         WHERE "user" = %s;''', (user_id,))
     except Exception as ex:
         config.logging.error(ex)
+        
+
+def get_category():
+    try:
+        return get_data('''SELECT * FROM category;''', ())
+    except Exception as ex:
+        config.logging.error(ex)
+
+
+def add_dish(name, description, price, category, photo):
+    try:
+        return set_data('''INSERT INTO menu 
+                        (name, description, price, category, photo)
+                        VALUES (%s, %s, %s, %s, %s) RETURNING id;''', 
+                        (name, description, price, category, photo))
+    except Exception as ex:
+        config.logging.error(ex)

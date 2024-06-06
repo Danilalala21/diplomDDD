@@ -1,3 +1,4 @@
+import os
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 from flask import Flask, jsonify, render_template, redirect, request, url_for, flash,session
 import db as db
@@ -8,6 +9,7 @@ from config import *
 from forms import *
 from werkzeug.exceptions import InternalServerError
 from collections import defaultdict
+from werkzeug.utils import secure_filename
 
 
 def organize_menu_by_categories(menu_items):
@@ -197,6 +199,35 @@ def cart():
             flash('Your cart is currently empty.', 'info')
         return render_template(
             'cart.html', page='cart', cart_items=cart_items)
+    except Exception as ex:
+        logging.error(ex)
+        raise InternalServerError
+
+
+@app.route('/create', methods=['GET', 'POST'])
+@login_required
+def create():
+    try:
+        form = AddDishForm()
+        categories = db.get_category()
+        form.category.choices = [(c.get('id'), c.get('name')) for c in categories]
+        
+        if form.validate_on_submit():
+            image = form.image.data
+            if image:
+                filename = secure_filename(image.filename)
+                file_path = os.path.join('path/to/save/images', filename)
+                image.save(file_path)
+            else:
+                file_path = None
+            if db.add_dish(
+                form.name.data, form.description.data, 
+                form.price.data, form.category.data, file_path):
+                flash('Новое блюдо успешно добавлено!', 'success')
+                return redirect(url_for('create'))  
+            flash('Новое блюдо успешно добавлено!', 'error')
+            return redirect(url_for('menu'))  
+        return render_template('create.html', page='create', form=form)
     except Exception as ex:
         logging.error(ex)
         raise InternalServerError

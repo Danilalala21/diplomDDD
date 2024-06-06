@@ -4,6 +4,18 @@
     Наше Меню
 {% endblock title %}
 
+{% block header_down %}
+<div class='header-title'>
+    Подробнее о нашем меню
+    <div class='header-subtitle'>МЫ ЦЕНИМ КАЧЕСТВО</div>
+    {% if current_user.role =='admin' or 'staff' %}
+    <div class='header-bth'>
+        <a href='/create' class='header-button'>Добавить блюдо</a>
+    </div>
+    {% endif%}
+</div>
+{% endblock %}
+
 {% block content %}
 <div class='menu'>
     <div class='container'>

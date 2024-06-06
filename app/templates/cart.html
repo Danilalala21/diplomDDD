@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}
-Shopping Cart
+Корзина
 {% endblock title %}
-
+{% block header_down %}
+<div class='header-title'>
+    Корзина
+</div>
+{% endblock %}
 {% block content %}
 <link href="{{ url_for('static', filename='css/style.css') }}" rel='stylesheet' type='text/css' />
 
@@ -52,7 +56,7 @@ Shopping Cart
     <div class="container">
         <div class="tittle_head">
             <h3 class="tittle">
-                <span>Your Shopping Cart</span>
+                <span>Ваша корзина</span>
             </h3>
         </div>
         <div class="table-responsive">

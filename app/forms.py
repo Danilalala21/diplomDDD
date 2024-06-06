@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    StringField, PasswordField, SubmitField, 
+    DecimalField, StringField, PasswordField, SubmitField, 
     BooleanField, SelectField, TextAreaField)
 from wtforms.validators import (
-    DataRequired, EqualTo, ValidationError, Length, Email)
+    DataRequired, EqualTo, ValidationError, Length, Email, NumberRange)
 from wtforms.widgets import TextArea
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 import re
@@ -85,3 +85,11 @@ class ResetPasswordForm(FlaskForm):
     def validate_old_password(self, old_password_field):
         if old_password_field.data == self.new_password.data:
             raise ValidationError('Новый пароль должен отличаться от старого')
+
+
+class AddDishForm(FlaskForm):
+    name = StringField('Название', validators=[DataRequired(), Length(min=2, max=100)])
+    description = StringField('Описание', validators=[DataRequired(), Length(min=10, max=500)])
+    price = DecimalField('Цена', validators=[DataRequired(), NumberRange(min=0)])
+    category = SelectField('Категория', choices=[], coerce=int, validators=[DataRequired()])
+    image = FileField('Фото', validators=[FileAllowed(['jpg', 'png'], 'Images only!')])

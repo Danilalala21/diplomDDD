@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS public.menu
     rate text,
     price real,
     category integer,
+    photo text,
     PRIMARY KEY (id)
 );
 
