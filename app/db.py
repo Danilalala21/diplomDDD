@@ -261,3 +261,12 @@ def add_dish(name, description, price, category, photo):
                         (name, description, price, category, photo))
     except Exception as ex:
         config.logging.error(ex)
+        
+        
+def update_cart_count(id, count):
+    try:
+        return set_data('''UPDATE cart SET count = %s WHERE id INTO food = %s
+                         RETURNING id;''', 
+                        (count, id))
+    except Exception as ex:
+        config.logging.error(ex)

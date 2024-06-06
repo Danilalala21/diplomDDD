@@ -231,7 +231,22 @@ def create():
     except Exception as ex:
         logging.error(ex)
         raise InternalServerError
+    
+    
+@app.route('/update-quantity', methods=['POST'])
+def update_quantity():
+    data = request.get_json()
+    item_id = data.get('itemId')
+    change = data.get('change')
+    # Здесь код для обновления количества товара в корзине
+    # Предположим, что это обновление происходит успешно
+    return jsonify({'success': True})
 
+@app.route('/place-order', methods=['POST'])
+def place_order():
+    # Здесь код для оформления заказа
+    # Предположим, что заказ успешно оформлен
+    return jsonify({'success': True, 'message': 'Заказ успешно оформлен'})
 
 @app.route('/about')
 @login_required

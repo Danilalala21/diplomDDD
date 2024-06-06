@@ -50,6 +50,24 @@
         font-weight: bold;
         margin-bottom: 20px;
     }
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+    }
+    .quantity-button {
+        padding: 5px 10px;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+    .order-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 </style>
 
 <div class="inner_content">
@@ -75,39 +93,58 @@
                     <tr>
                         <td>{{ loop.index }}</td>
                         <td>{{ item.get('name') }}</td>
-                        <td>{{ item.get('count') }}</td>
-                        <td>{{ "%.2f"|format(item.summ) }}</td>
-                        <td>{{ "%.2f"|format(item.get('summ', 0) * item.get('count', 1)) }}</td>
+                        <td>
+                            <div class="quantity-controls">
+                                <button class="quantity-button" onclick="updateQuantity('{{ item.id }}', -1)">-</button>
+                                {{ item.get('count') }}
+                                <button class="quantity-button" onclick="updateQuantity('{{ item.id }}', 1)">+</button>
+                            </div>
+                        </td>
+                        <td>{{ "%.2f"|format(item.get('price', 0)) }}</td>
+                        <td>{{ "%.2f"|format(item.get('price', 0) * item.get('count', 1)) }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <button class="order-button" onclick="placeOrder()">Заказать</button>
         </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const compare = (idx, asc) => (a, b) => {
-            return (
-                (v1, v2) =>
-                    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2)
-                        ? v1 - v2
-                        : v1.toString().localeCompare(v2)
-            )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
-        };
-
-        const getCellValue = (row, index) => row.children[index].textContent.trim();
-
-        document.querySelectorAll('th').forEach(th =>
-            th.addEventListener('click', (() => {
-                const table = th.closest('table');
-                const tbody = table.querySelector('tbody');
-                Array.from(tbody.querySelectorAll('tr'))
-                    .sort(compare(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
-                    .forEach(row => tbody.appendChild(row));
-            }))
-        );
-    });
+    function updateQuantity(itemId, change) {
+        fetch('/update-quantity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({itemId: itemId, change: change})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();  // Перезагрузить страницу для обновления данных
+            } else {
+                alert('Не удалось обновить количество: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    
+    function placeOrder() {
+        fetch('/place-order', {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/order-confirmation';  // Переход на страницу подтверждения заказа
+            } else {
+                alert('Не удалось оформить заказ: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    
 </script>
 {% endblock content %}
