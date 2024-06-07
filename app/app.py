@@ -244,9 +244,27 @@ def update_quantity():
 
 @app.route('/place-order', methods=['POST'])
 def place_order():
-    # Здесь код для оформления заказа
-    # Предположим, что заказ успешно оформлен
-    return jsonify({'success': True, 'message': 'Заказ успешно оформлен'})
+    # Получение данных пользователя и номера стола
+    user_id = current_user.id
+    table_number = request.form.get('table_number')
+
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Пользователь не авторизован'}), 401
+
+    if not table_number:
+        return jsonify({'success': False, 'message': 'Номер стола не указан'}), 400
+    try:
+        # Преобразование номера стола из строки в число, если это необходимо
+        table_number = int(table_number)
+        order_created = db.create_order(user_id, table_number)
+
+        if order_created:
+            return jsonify({'success': True, 'message': 'Заказ успешно оформлен'})
+        return jsonify({'success': False, 'message': 'Не удалось оформить заказ'})
+    except (ValueError, TypeError):
+        return jsonify({'success': False, 'message': 'Некорректные данные номера стола'}), 400
+    except Exception as ex:
+        return jsonify({'success': False, 'message': str(ex)}), 500
 
 @app.route('/about')
 @login_required
@@ -273,15 +291,29 @@ def profile():
 
 
 @app.route('/orders')
-@login_required
-@user_check_password
 def orders():
-    try:
-        return render_template(
-            'orders.html', page='orders')
-    except Exception as ex:
-        logging.error(ex)
-        raise InternalServerError
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+
+    orders = db.get_user_orders(user_id)
+    # Группировка данных заказа по ID заказа
+    grouped_orders = {}
+    for order in orders:
+        if order['id'] not in grouped_orders:
+            grouped_orders[order['id']] = {
+                'time': order['time'],
+                'summa': order['summa'],
+                'status': order['status'],
+                'items': []
+            }
+        grouped_orders[order['id']]['items'].append({
+            'food': order['food'],
+            'count': order['count'],
+            'summ': order['summ']
+        })
+
+    return render_template('orders.html', orders=grouped_orders)
     
 
 @app.route('/users')

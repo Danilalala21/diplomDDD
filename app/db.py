@@ -263,10 +263,117 @@ def add_dish(name, description, price, category, photo):
         config.logging.error(ex)
         
         
-def update_cart_count(id, count):
+def update_cart_count(item_id, change, user_id):
+    """
+    Обновляет количество указанного товара в корзине пользователя.
+
+    Args:
+        item_id (int): ID товара в корзине.
+        change (int): Изменение количества товара (может быть положительным или отрицательным).
+        user_id (int): ID пользователя.
+
+    Returns:
+        tuple: (bool, str) успех операции и сообщение.
+    """
     try:
-        return set_data('''UPDATE cart SET count = %s WHERE id INTO food = %s
-                         RETURNING id;''', 
-                        (count, id))
+        connection = psycopg2.connect(**config.DB_CONFIG)
+        cursor = connection.cursor()
+
+        # Начало транзакции
+        connection.autocommit = False
+
+        # Получить текущее количество товара в корзине
+        cursor.execute("SELECT count FROM cart WHERE user_id = %s AND food = %s", (user_id, item_id))
+        result = cursor.fetchone()
+
+        if result:
+            current_quantity = result[0]
+            new_quantity = current_quantity + change
+
+            if new_quantity <= 0:
+                # Если количество становится нулевым или меньше, удаляем товар из корзины
+                cursor.execute("DELETE FROM cart WHERE user_id = %s AND food = %s", (user_id, item_id))
+            else:
+                # Обновляем количество товара в корзине
+                cursor.execute("UPDATE cart SET count = %s WHERE user_id = %s AND food = %s", (new_quantity, user_id, item_id))
+
+            # Подтверждаем изменения
+            connection.commit()
+            return True, "Количество успешно обновлено"
+        else:
+            return False, "Товар не найден в корзине"
+
+    except Exception as e:
+        if connection:
+            connection.rollback()  # Откатываем изменения в случае ошибки
+        config.logging.error(str(e))
+        return False, str(e)
+    finally:
+        if connection:
+            connection.close()
+
+
+
+def create_order(user_id, table_number):
+    """
+    Создает новый заказ, копирует содержимое корзины в список заказов и очищает корзину.
+
+    Args:
+        user_id (int): ID пользователя, который делает заказ.
+
+    Returns:
+        bool: True, если заказ успешно создан и корзина очищена; False в случае ошибки.
+    """
+    try:
+        connection = psycopg2.connect(**config.DB_CONFIG)
+        cursor = connection.cursor()
+        
+        # Начать транзакцию
+        connection.autocommit = False
+
+        # Получить данные из корзины
+        cursor.execute("SELECT food, count, count * summ AS total FROM cart WHERE user_id = %s", (user_id,))
+        cart_items = cursor.fetchall()
+        if not cart_items:
+            raise Exception("Корзина пуста")
+
+        # Расчет суммы заказа
+        total_sum = sum(item['total'] for item in cart_items)
+
+        # Создание заказа
+        cursor.execute("INSERT INTO orders (user, time, summa, table, status) VALUES (%s, NOW(), %s, %s, 1) RETURNING id;", 
+                       (user_id, total_sum, table_number))
+        order_id = cursor.fetchone()[0]
+
+        # Добавление элементов в order_list
+        for item in cart_items:
+            cursor.execute("INSERT INTO order_list (order, food, count, summ) VALUES (%s, %s, %s, %s);", 
+                           (order_id, item['food'], item['count'], item['total']))
+
+        # Очистка корзины
+        cursor.execute("DELETE FROM cart WHERE user_id = %s;", (user_id,))
+
+        # Подтверждение транзакции
+        connection.commit()
+        return True
     except Exception as ex:
         config.logging.error(ex)
+        if connection:
+            connection.rollback()
+        return False
+    finally:
+        if connection:
+            connection.close()
+
+def get_user_orders():
+    try:
+        return get_data("""
+    SELECT o.id, o.time, o.summa, o.status, ol.food, ol.count, ol.summ
+    FROM orders o
+    JOIN order_list ol ON o.id = ol.order
+    WHERE o.user = %s
+    ORDER BY o.id;
+    """, ())
+    except Exception as ex:
+        config.logging.error(ex)
+        

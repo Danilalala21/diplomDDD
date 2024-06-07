@@ -1,6 +1,25 @@
 {% extends 'base.html' %}
-{% block title %}{% endblock title%}
-
+{% block title %}Заказы{% endblock %}
 {% block content %}
-
-{% endblock content%}
+<div class="container">
+    <h1>Ваши заказы</h1>
+    {% for order_id, order in orders.items() %}
+    <div onclick="toggleDetails('details-{{ order_id }}')">
+        <h2>Заказ №{{ order_id }}</h2>
+        <p>Время: {{ order['time'] }}</p>
+        <p>Сумма: {{ order['summa'] }}</p>
+    </div>
+    <div id="details-{{ order_id }}" style="display:none;">
+        {% for item in order['items'] %}
+        <p>{{ item['food'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+<script>
+function toggleDetails(id) {
+    var element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+{% endblock %}
