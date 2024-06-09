@@ -157,7 +157,6 @@ def change_password():
 
     
 @app.route('/')
-@login_required
 def index():
     try:
         return render_template('index.html', page='_')
@@ -167,7 +166,6 @@ def index():
     
 
 @app.route('/menu')
-@login_required
 def menu():
     try:
         categorized_menu = organize_menu_by_categories(db.get_menu())
@@ -192,6 +190,7 @@ def add_to_cart():
 
 @app.route('/cart')
 @login_required
+@user_check_password
 def cart():
     try:
         cart_items = db.get_cart(current_user.id) 
@@ -206,6 +205,7 @@ def cart():
 
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
+@user_check_password
 def create():
     try:
         form = AddDishForm()
@@ -243,6 +243,8 @@ def update_quantity():
     return jsonify({'success': True})
 
 @app.route('/place-order', methods=['POST'])
+@login_required
+@user_check_password
 def place_order():
     # Получение данных пользователя и номера стола
     user_id = current_user.id
@@ -267,7 +269,6 @@ def place_order():
         return jsonify({'success': False, 'message': str(ex)}), 500
 
 @app.route('/about')
-@login_required
 def about():
     try:
         return render_template('about.html', page='menu')
@@ -291,6 +292,8 @@ def profile():
 
 
 @app.route('/orders')
+@login_required
+@user_check_password
 def orders():
     user_id = session.get('user_id')
     if not user_id:
