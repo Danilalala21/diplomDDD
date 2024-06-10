@@ -153,9 +153,9 @@ def change_password():
     except Exception as ex:
         logging.error(ex)
         raise InternalServerError
-    
 
-    
+
+
 @app.route('/')
 def index():
     try:
@@ -163,7 +163,7 @@ def index():
     except Exception as ex:
         logging.error(ex)
         raise InternalServerError
-    
+
 
 @app.route('/menu')
 def menu():
