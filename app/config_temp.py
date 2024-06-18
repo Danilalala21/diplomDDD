@@ -19,4 +19,4 @@ DB_CONFIG = {
     'user':'postgres',
     'password':'password',
     'dbname':'dbname',
-    'port':5432}
+    'port':5433}
