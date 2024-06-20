@@ -232,15 +232,21 @@ def get_menu():
         
 
 def add_food_to_cart(user_id, food_id, price):
-    return set_data(
-            '''INSERT INTO cart ("user", food, count, summ) VALUES (%s, %s, %s, %s) RETURNING id;''', 
+    try:
+        return set_data(
+            '''INSERT INTO cart ("user", food, count, summ) 
+            VALUES (%s, %s, %s, %s) RETURNING id;''', 
             (user_id, food_id, 1, price))
+    except Exception as ex:
+        config.logging.error(ex)
+    
 
 
 def get_cart(user_id):
     try:
-        return get_data('''SELECT c.id, m.name, c.count, c.summ FROM cart as c
-                        JOIN menu as m ON m.id = c.food 
+        return get_data('''SELECT c.id, m.name, c.count, c.summ, m.price 
+                        FROM cart as c
+                        JOIN menu as m ON m.id = c.food
                         WHERE "user" = %s;''', (user_id,))
     except Exception as ex:
         config.logging.error(ex)

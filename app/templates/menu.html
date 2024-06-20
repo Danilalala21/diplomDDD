@@ -28,7 +28,7 @@
                 {% for menu_item in items %}
                 <div class='menu-item'>
                     <div class='menu-image'>
-                        <img src="{{ url_for('static', filename=menu_item.image) }}" class='menu-img'>
+                        <img src="{{ url_for('static', filename='img/' + (menu_item.photo if menu_item.photo else 'card.png')) }}" class='menu-img'>
                     </div>
                     <div class='menu-text'>{{ menu_item.name }}</div>
                     <div class='menu-price'>{{ menu_item.price }} ₽ - {{ menu_item.rate }} rate</div>
@@ -81,11 +81,7 @@
     .menu-button button:hover {
         background-color: #218838; /* Темно-зеленый фон для кнопки при наведении */
     }
-    .menu-image img {
-        width: 100%; /* Ширина изображения соответствует контейнеру */
-        height: auto; /* Высота изображения сохраняет пропорции */
-        border-radius: 8px; /* Скругленные углы изображений */
-    }
+    
 </style>
 <style>
     .menu-category h3 {

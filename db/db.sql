@@ -208,12 +208,12 @@ INSERT INTO public.order_status (status) VALUES
 ('Completed'),
 ('Cancelled');
 
-INSERT INTO public.category (name) VALUES ('Горячие блюда'), ('Соки'), ('Закуски') returning id;
+INSERT INTO public.category (name) VALUES ('Горячие блюда'), ('Соки'), ('Закуски'), ('Салаты') returning id;
 
 -- Insert menu items with fish
-INSERT INTO public.menu (name, description, rate, price, category) VALUES
-('Grilled Salmon', 'Свежий филе лосося, приготовленное до идеального состояния', '4.6', 12.99, 1),
-('Fish and Chips', 'Классическое блюдо из рыбы в кляре подаётся с картофелем фри', '4.4', 9.99, 1),
-('Fish Tacos', 'Мягкие тортильи с хрустящей рыбой, сальсой и капустным салатом', '4.3', 8.99, 1),
-('Fish Curry', 'Ароматное карри с нежными кусочками рыбы и душистыми специями', '4.5', 11.99, 1),
-('Seafood Pasta', 'Паста в сливочном соусе с креветками, морскими гребешками и рыбой', '4.7', 14.99, 1);
+INSERT INTO public.menu (name, description, rate, price, category, photo) VALUES
+('Grilled Salmon', 'Свежий филе лосося, приготовленное до идеального состояния', '4.6', 12.99, 1, 'losos.jpg'),
+('Fish and Chips', 'Классическое блюдо из рыбы в кляре подаётся с картофелем фри', '4.4', 9.99, 1, 'sudak.jpg'),
+('Fish Tacos', 'Мягкие тортильи с хрустящей рыбой, сальсой и капустным салатом', '4.3', 8.99, 1, 'forel.jpg'),
+('Fish Curry', 'Ароматное карри с нежными кусочками рыбы и душистыми специями', '4.5', 11.99, 1, '30.jpg'),
+('Seafood Cezar', 'Цезарь в сливочном соусе с креветками, морскими гребешками и рыбой', '4.7', 14.99, 1, 'cezarKrev.jpg');

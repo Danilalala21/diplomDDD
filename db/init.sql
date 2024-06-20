@@ -15,6 +15,6 @@ VALUES
 
 -- Insert comments
 INSERT INTO public.comments ("user", food, comment, "time") VALUES
-(2, 1, 'The burger was amazing!', CURRENT_TIMESTAMP),
-(2, 2, 'Pizza was a bit too greasy for my taste', CURRENT_TIMESTAMP),
-(3, 3, 'Great salad, fresh ingredients', CURRENT_TIMESTAMP);
+(2, 1, 'Было очень вкусно!!', CURRENT_TIMESTAMP),
+(2, 2, 'Обязательно придем еще раз!', CURRENT_TIMESTAMP),
+(3, 3, 'Свежие продукты, очень понравилось', CURRENT_TIMESTAMP);
