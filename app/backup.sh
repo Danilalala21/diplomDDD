@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DB_NAME="cafe"
-USERNAME="your_username"
+DB_NAME="CafeLast"
+USERNAME="postgres"
 BACKUP_PATH="/path/to/your/backup/directory"
 BACKUP_FILENAME="db_backup_$(date +%Y%m%d_%H%M%S).sql"
 
