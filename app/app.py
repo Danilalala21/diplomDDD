@@ -122,10 +122,10 @@ def registration():
             if db.create_user(
                 form.email.data, form.password.data,
                 form.lastname.data, form.firstname.data) is not None:
-                flash('Registration was completed successfully!', 
+                flash('Регистрация прошла успешно!', 
                     category='success')
                 return redirect('/login')
-            flash('An error occurred while register!',
+            flash('Ошибка во время регистрации!',
                       category='error')
             
         return render_template('register.html', page='register', form=form)
