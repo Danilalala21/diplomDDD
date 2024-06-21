@@ -411,3 +411,10 @@ def get_all_orders():
         """)
     except Exception as ex:
         config.logging.error(ex)
+
+def get_order_statuses():
+    try:
+        return get_data("SELECT status FROM order_status ORDER BY id;")
+    except Exception as ex:
+        config.logging.error(ex)
+        return []

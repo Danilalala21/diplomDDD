@@ -1,17 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}Заказы{% endblock %}
 {% block header_down %}
-<div class='header-title'>
-    Заказы
-    <div class='header-subtitle'></div>
-</div>
+<div class='header-title'>Заказы</div>
 {% endblock %}
 {% block content %}
 <div class="container">
-    {% if current_user and current_user.is_authenticated %}
-        {% if current_user.role == 'admin' or current_user.role == 'staff'%}
-            <h1>Все заказы</h1>
-            {% for order_id, order in orders.items() %}
+    <h1>{% if current_user.role == 'admin' or current_user.role == 'staff' %}Все заказы{% else %}Ваши заказы{% endif %}</h1>
+    <div>
+        <label for="statusFilter">Фильтр по статусу:</label>
+        <select id="statusFilter" onchange="filterOrdersByStatus()">
+            <option value="">Все статусы</option>
+            {% for status in statuses %}
+            <option value="{{ status.status }}">{{ status.status }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div id="ordersContainer">
+        {% for order_id, order in orders.items() %}
+        <div class="order" data-status="{{ order['status'] }}">
             <div onclick="toggleDetails('details-{{ order_id }}')">
                 <h2>Заказ №{{ order_id }}</h2>
                 <p>Время: {{ order['time'] }}</p>
@@ -21,34 +28,31 @@
             </div>
             <div id="details-{{ order_id }}" style="display:none;">
                 {% for item in order['items'] %}
-                <p>{{ item['food'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
+                <p>{{ item['food_name'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
                 {% endfor %}
             </div>
-            {% endfor %}
-        {% else %}
-            <h1>Ваши заказы</h1>
-            {% for order_id, order in orders.items() %}
-            <div onclick="toggleDetails('details-{{ order_id }}')">
-                <h2>Заказ №{{ order_id }}</h2>
-                <p>Время: {{ order['time'] }}</p>
-                <p>Сумма: {{ order['summa'] }}₽</p>
-                <p>Статус: {{ order['status'] }}</p>
-            </div>
-            <div id="details-{{ order_id }}" style="display:none;">
-                {% for item in order['items'] %}
-                <p>{{ item['food'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
-                {% endfor %}
-            </div>
-            {% endfor %}
-        {% endif %}
-    {% else %}
-        <p>Пожалуйста, <a href="{{ url_for('login') }}">войдите</a> для просмотра ваших заказов.</p>
-    {% endif %}
+        </div>
+        {% endfor %}
+    </div>
 </div>
+
 <script>
 function toggleDetails(id) {
     var element = document.getElementById(id);
     element.style.display = element.style.display === 'none' ? 'block' : 'none';
+}
+
+function filterOrdersByStatus() {
+    var selectedStatus = document.getElementById('statusFilter').value;
+    var orders = document.querySelectorAll('.order');
+
+    orders.forEach(order => {
+        if (selectedStatus === '' || order.getAttribute('data-status') === selectedStatus) {
+            order.style.display = '';
+        } else {
+            order.style.display = 'none';
+        }
+    });
 }
 </script>
 {% endblock %}

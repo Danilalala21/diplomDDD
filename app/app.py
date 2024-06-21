@@ -329,7 +329,8 @@ def orders():
             'summ': order['summ']         # Сумма по позиции
         })
 
-    return render_template('orders.html', orders=grouped_orders)
+    return render_template(
+        'orders.html', orders=grouped_orders, statuses=db.get_order_statuses())
 
 
 @app.route('/users')
