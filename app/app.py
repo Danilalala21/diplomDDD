@@ -5,11 +5,13 @@ import db as db
 import models as m
 import constant as const
 import functools
+import mail as email
 from config import *
 from forms import *
 from werkzeug.exceptions import InternalServerError
 from collections import defaultdict
 from werkzeug.utils import secure_filename
+
 
 
 def organize_menu_by_categories(menu_items):
@@ -267,6 +269,8 @@ def place_order():
         order_created = db.create_order(current_user.id, table_number)
 
         if order_created:
+            order_details = f"Номер стола: {table_number}\nID пользователя: {current_user.id}"
+            # email.send_order_email(current_user.email, order_details)  # Отправка деталей заказа на почту
             return jsonify({'success': True, 'message': 'Заказ успешно оформлен'})
         return jsonify({'success': False, 'message': 'Не удалось оформить заказ'})
     except ValueError:
