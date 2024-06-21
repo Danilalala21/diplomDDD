@@ -5,6 +5,7 @@
 {% block header_down %}
 <div class='header-title'>
     Корзина
+    <div class='header-subtitle'></div>
 </div>
 {% endblock %}
 {% block content %}
@@ -95,9 +96,9 @@
                         <td>{{ item.get('name') }}</td>
                         <td>
                             <div class="quantity-controls">
-                                <button class="quantity-button" onclick="updateQuantity('{{ item.id }}', -1)">-</button>
+                                <button class="quantity-button" onclick="updateQuantity('{{ item.food }}', -1)">-</button>
                                 {{ item.get('count') }}
-                                <button class="quantity-button" onclick="updateQuantity('{{ item.id }}', 1)">+</button>
+                                <button class="quantity-button" onclick="updateQuantity('{{ item.food }}', 1)">+</button>
                             </div>
                         </td>
                         <td>{{ "%.2f"|format(item.get('price', 0)) }}</td>
