@@ -9,7 +9,7 @@
 {% block content %}
 <div class="container">
     {% if current_user and current_user.is_authenticated %}
-        {% if current_user.role == 'admin' %}
+        {% if current_user.role == 'admin' or current_user.role == 'staff'%}
             <h1>Все заказы</h1>
             {% for order_id, order in orders.items() %}
             <div onclick="toggleDetails('details-{{ order_id }}')">
@@ -21,7 +21,7 @@
             </div>
             <div id="details-{{ order_id }}" style="display:none;">
                 {% for item in order['items'] %}
-                <p>{{ item['food_name'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
+                <p>{{ item['food'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
                 {% endfor %}
             </div>
             {% endfor %}
@@ -36,7 +36,7 @@
             </div>
             <div id="details-{{ order_id }}" style="display:none;">
                 {% for item in order['items'] %}
-                <p>{{ item['food_name'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
+                <p>{{ item['food'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
                 {% endfor %}
             </div>
             {% endfor %}
