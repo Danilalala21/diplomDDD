@@ -120,7 +120,8 @@ def get_users():
 def create_user(email, password, lastname, firstname):
     password_hash = generate_password_hash(password)
     try:
-        role = get_data("SELECT id FROM roles WHERE role = 'user';")
+        role = get_data("SELECT id FROM roles WHERE role = 'customer';")
+        print(role)
         if role:
             role_id = role[0].get('id')
             return set_data(
