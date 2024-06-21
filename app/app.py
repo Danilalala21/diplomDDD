@@ -84,14 +84,14 @@ def login():
                     if db.check_user_password(
                         user.password, form.password.data):
                         login_user(user, remember=form.remember_me.data)
-                        flash("Success login", category='success')
+                        flash("Успещная авторизация", category='success')
                         db.change_user_last_login(current_user.id)
-                        db.history(current_user.id, 'the user has logged in')
+                        db.history(current_user.id,'Пользователь авторизовался')
                         return redirect("/")
                     
-                    flash("Invalid username or password", category='error')
+                    flash("Неверный логин или пароль", category='error')
                     return render_template('login.html', page='login', form=form)
-                flash("The user with this email was not found", 
+                flash("Пользователь с таким email не найден", 
                       category='error')
                 return render_template('login.html', page='login', form=form)
             return render_template('login.html', page='login', form=form)
@@ -105,7 +105,7 @@ def login():
 @login_required
 def logout():
     if current_user.get_id():
-        db.history(current_user.id, 'the user has logged out')
+        db.history(current_user.id, 'Пользователь вышел из системы')
         logout_user()
     return redirect("/")
 
@@ -195,7 +195,7 @@ def cart():
     try:
         cart_items = db.get_cart(current_user.id) 
         if not cart_items:
-            flash('Your cart is currently empty.', 'info')
+            flash('Ваша корзина пуста!.', 'info')
         return render_template(
             'cart.html', page='cart', cart_items=cart_items)
     except Exception as ex:
@@ -216,7 +216,7 @@ def create():
             image = form.image.data
             if image:
                 filename = secure_filename(image.filename)
-                file_path = os.path.join('path/to/save/images', filename)
+                file_path = os.path.join(const.IMAGES_FOLDER, filename)
                 image.save(file_path)
             else:
                 file_path = None
@@ -238,36 +238,43 @@ def update_quantity():
     data = request.get_json()
     item_id = data.get('itemId')
     change = data.get('change')
-    # Здесь код для обновления количества товара в корзине
-    # Предположим, что это обновление происходит успешно
-    return jsonify({'success': True})
+    user_id = current_user.id # Пример получения ID пользователя, предполагается, что аутентификация уже реализована
+
+    success, message = db.update_cart_count(item_id, change, user_id)
+
+    if success:
+        # Вычислить новую сумму в корзине
+        new_sum = db.calculate_cart_total(user_id)
+        return jsonify({'success': True, 'message': message, 'newSum': new_sum})
+    return jsonify({'success': False, 'message': message})
 
 @app.route('/place-order', methods=['POST'])
 @login_required
 @user_check_password
 def place_order():
-    # Получение данных пользователя и номера стола
-    user_id = current_user.id
-    table_number = request.form.get('table_number')
-
-    if not user_id:
+    if not current_user.is_authenticated:
         return jsonify({'success': False, 'message': 'Пользователь не авторизован'}), 401
-
+    
+    data = request.get_json()  # Получение JSON данных из запроса
+    table_number = data.get('table_number') if data else None
+    
     if not table_number:
         return jsonify({'success': False, 'message': 'Номер стола не указан'}), 400
+    
     try:
         # Преобразование номера стола из строки в число, если это необходимо
         table_number = int(table_number)
-        order_created = db.create_order(user_id, table_number)
+        order_created = db.create_order(current_user.id, table_number)
 
         if order_created:
             return jsonify({'success': True, 'message': 'Заказ успешно оформлен'})
         return jsonify({'success': False, 'message': 'Не удалось оформить заказ'})
-    except (ValueError, TypeError):
+    except ValueError:
         return jsonify({'success': False, 'message': 'Некорректные данные номера стола'}), 400
     except Exception as ex:
         return jsonify({'success': False, 'message': str(ex)}), 500
-
+    
+    
 @app.route('/about')
 def about():
     try:
@@ -295,12 +302,14 @@ def profile():
 @login_required
 @user_check_password
 def orders():
-    user_id = session.get('user_id')
-    if not user_id:
+    if not current_user.is_authenticated:
         return redirect(url_for('login'))
 
-    orders = db.get_user_orders(user_id)
-    # Группировка данных заказа по ID заказа
+    if current_user.role == 'admin' or current_user.role == 'staff':
+        orders = db.get_all_orders()  # Function to get all orders for admin
+    else:
+        orders = db.get_user_orders(current_user.id)
+        
     grouped_orders = {}
     for order in orders:
         if order['id'] not in grouped_orders:

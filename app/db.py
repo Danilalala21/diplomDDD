@@ -121,7 +121,6 @@ def create_user(email, password, lastname, firstname):
     password_hash = generate_password_hash(password)
     try:
         role = get_data("SELECT id FROM roles WHERE role = 'customer';")
-        print(role)
         if role:
             role_id = role[0].get('id')
             return set_data(
@@ -245,7 +244,7 @@ def add_food_to_cart(user_id, food_id, price):
 
 def get_cart(user_id):
     try:
-        return get_data('''SELECT c.id, m.name, c.count, c.summ, m.price 
+        return get_data('''SELECT c.id, m.name, c.count, c.summ, m.price, c.food
                         FROM cart as c
                         JOIN menu as m ON m.id = c.food
                         WHERE "user" = %s;''', (user_id,))
@@ -288,27 +287,24 @@ def update_cart_count(item_id, change, user_id):
 
         # Начало транзакции
         connection.autocommit = False
-
         # Получить текущее количество товара в корзине
-        cursor.execute("SELECT count FROM cart WHERE user_id = %s AND food = %s", (user_id, item_id))
+        cursor.execute('SELECT count FROM cart WHERE "user" = %s AND food = %s', (user_id, int(item_id)))
         result = cursor.fetchone()
-
         if result:
             current_quantity = result[0]
             new_quantity = current_quantity + change
 
             if new_quantity <= 0:
                 # Если количество становится нулевым или меньше, удаляем товар из корзины
-                cursor.execute("DELETE FROM cart WHERE user_id = %s AND food = %s", (user_id, item_id))
+                cursor.execute('DELETE FROM cart WHERE "user" = %s AND food = %s', (user_id, item_id))
             else:
                 # Обновляем количество товара в корзине
-                cursor.execute("UPDATE cart SET count = %s WHERE user_id = %s AND food = %s", (new_quantity, user_id, item_id))
+                cursor.execute('UPDATE cart SET count = %s WHERE "user" = %s AND food = %s', (new_quantity, user_id, item_id))
 
             # Подтверждаем изменения
             connection.commit()
             return True, "Количество успешно обновлено"
-        else:
-            return False, "Товар не найден в корзине"
+        return False, "Товар не найден в корзине"
 
     except Exception as e:
         if connection:
@@ -319,6 +315,14 @@ def update_cart_count(item_id, change, user_id):
         if connection:
             connection.close()
 
+
+def calculate_cart_total(user_id):
+    """Вычисляет общую сумму в корзине пользователя."""
+    try:
+        result = get_data("SELECT SUM(count * price) as total FROM cart JOIN food ON cart.food = food.id WHERE user_id = %s", (user_id,))
+        return result[0]['total'] if result[0]['total'] is not None else 0
+    except Exception as e:
+        config.logging.error(str(e))
 
 
 def create_order(user_id, table_number):
@@ -339,26 +343,26 @@ def create_order(user_id, table_number):
         connection.autocommit = False
 
         # Получить данные из корзины
-        cursor.execute("SELECT food, count, count * summ AS total FROM cart WHERE user_id = %s", (user_id,))
+        cursor.execute('SELECT food, count, count * summ AS total FROM cart WHERE "user" = %s', (user_id,))
         cart_items = cursor.fetchall()
         if not cart_items:
             raise Exception("Корзина пуста")
 
         # Расчет суммы заказа
         total_sum = sum(item['total'] for item in cart_items)
-
+        print(total_sum)
         # Создание заказа
         cursor.execute("INSERT INTO orders (user, time, summa, table, status) VALUES (%s, NOW(), %s, %s, 1) RETURNING id;", 
                        (user_id, total_sum, table_number))
         order_id = cursor.fetchone()[0]
-
+        print(order_id)
         # Добавление элементов в order_list
         for item in cart_items:
             cursor.execute("INSERT INTO order_list (order, food, count, summ) VALUES (%s, %s, %s, %s);", 
                            (order_id, item['food'], item['count'], item['total']))
 
         # Очистка корзины
-        cursor.execute("DELETE FROM cart WHERE user_id = %s;", (user_id,))
+        cursor.execute('DELETE FROM cart WHERE "user" = %s;', (user_id,))
 
         # Подтверждение транзакции
         connection.commit()
@@ -372,7 +376,7 @@ def create_order(user_id, table_number):
         if connection:
             connection.close()
 
-def get_user_orders():
+def get_user_orders(user_id):
     try:
         return get_data("""
     SELECT o.id, o.time, o.summa, o.status, ol.food, ol.count, ol.summ
@@ -380,7 +384,17 @@ def get_user_orders():
     JOIN order_list ol ON o.id = ol.order
     WHERE o.user = %s
     ORDER BY o.id;
-    """, ())
+    """, (user_id,))
     except Exception as ex:
         config.logging.error(ex)
         
+def get_all_orders():
+    try:
+        return get_data("""
+    SELECT o.id, o.time, o.summa, o.status, ol.food, ol.count, ol.summ
+    FROM orders o
+    JOIN order_list ol ON o.id = ol.order
+    ORDER BY o.id;
+    """)
+    except Exception as ex:
+        config.logging.error(ex)

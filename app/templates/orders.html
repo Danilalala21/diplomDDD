@@ -1,8 +1,21 @@
 {% extends 'base.html' %}
 {% block title %}Заказы{% endblock %}
+{% block header_down %}
+<div class='header-title'>
+    Заказы
+    <div class='header-subtitle'></div>
+</div>
+{% endblock %}
 {% block content %}
 <div class="container">
+    {% if current_user and current_user.is_authenticated%}
+        {% if current_user.role != 'customer' %}
+        <h1>Все заказы</h1>
+        {% endif%}
+    {%else%}
     <h1>Ваши заказы</h1>
+    {%endif%}
+    
     {% for order_id, order in orders.items() %}
     <div onclick="toggleDetails('details-{{ order_id }}')">
         <h2>Заказ №{{ order_id }}</h2>
