@@ -8,26 +8,42 @@
 {% endblock %}
 {% block content %}
 <div class="container">
-    {% if current_user and current_user.is_authenticated%}
-        {% if current_user.role != 'customer' %}
-        <h1>Все заказы</h1>
-        {% endif%}
-    {%else%}
-    <h1>Ваши заказы</h1>
-    {%endif%}
-    
-    {% for order_id, order in orders.items() %}
-    <div onclick="toggleDetails('details-{{ order_id }}')">
-        <h2>Заказ №{{ order_id }}</h2>
-        <p>Время: {{ order['time'] }}</p>
-        <p>Сумма: {{ order['summa'] }}</p>
-    </div>
-    <div id="details-{{ order_id }}" style="display:none;">
-        {% for item in order['items'] %}
-        <p>{{ item['food'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
-        {% endfor %}
-    </div>
-    {% endfor %}
+    {% if current_user and current_user.is_authenticated %}
+        {% if current_user.role == 'admin' %}
+            <h1>Все заказы</h1>
+            {% for order_id, order in orders.items() %}
+            <div onclick="toggleDetails('details-{{ order_id }}')">
+                <h2>Заказ №{{ order_id }}</h2>
+                <p>Время: {{ order['time'] }}</p>
+                <p>Сумма: {{ order['summa'] }}₽</p>
+                <p>Пользователь: {{ order['user_email'] }}</p>
+                <p>Статус: {{ order['status'] }}</p>
+            </div>
+            <div id="details-{{ order_id }}" style="display:none;">
+                {% for item in order['items'] %}
+                <p>{{ item['food_name'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <h1>Ваши заказы</h1>
+            {% for order_id, order in orders.items() %}
+            <div onclick="toggleDetails('details-{{ order_id }}')">
+                <h2>Заказ №{{ order_id }}</h2>
+                <p>Время: {{ order['time'] }}</p>
+                <p>Сумма: {{ order['summa'] }}₽</p>
+                <p>Статус: {{ order['status'] }}</p>
+            </div>
+            <div id="details-{{ order_id }}" style="display:none;">
+                {% for item in order['items'] %}
+                <p>{{ item['food_name'] }} - {{ item['count'] }} шт. - {{ item['summ'] }}₽</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% else %}
+        <p>Пожалуйста, <a href="{{ url_for('login') }}">войдите</a> для просмотра ваших заказов.</p>
+    {% endif %}
 </div>
 <script>
 function toggleDetails(id) {

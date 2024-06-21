@@ -348,18 +348,17 @@ def create_order(user_id, table_number):
         if not cart_items:
             raise Exception("Корзина пуста")
 
-        # Расчет суммы заказа
-        total_sum = sum(item['total'] for item in cart_items)
-        print(total_sum)
+        # Расчет суммы заказа   
+        total_sum = sum(item[2] for item in cart_items) 
         # Создание заказа
-        cursor.execute("INSERT INTO orders (user, time, summa, table, status) VALUES (%s, NOW(), %s, %s, 1) RETURNING id;", 
+        cursor.execute('INSERT INTO orders ("user", time, summa, "table", status) VALUES (%s, NOW(), %s, %s, 1) RETURNING id', 
                        (user_id, total_sum, table_number))
         order_id = cursor.fetchone()[0]
-        print(order_id)
+        
         # Добавление элементов в order_list
         for item in cart_items:
-            cursor.execute("INSERT INTO order_list (order, food, count, summ) VALUES (%s, %s, %s, %s);", 
-                           (order_id, item['food'], item['count'], item['total']))
+            cursor.execute('INSERT INTO order_list ("order", food, count, summ) VALUES (%s, %s, %s, %s);', 
+                           (order_id, item[0], item[1], item[2]))
 
         # Очистка корзины
         cursor.execute('DELETE FROM cart WHERE "user" = %s;', (user_id,))
@@ -379,22 +378,36 @@ def create_order(user_id, table_number):
 def get_user_orders(user_id):
     try:
         return get_data("""
-    SELECT o.id, o.time, o.summa, o.status, ol.food, ol.count, ol.summ
-    FROM orders o
-    JOIN order_list ol ON o.id = ol.order
-    WHERE o.user = %s
-    ORDER BY o.id;
-    """, (user_id,))
+        SELECT 
+            o.id, o.time, o.summa, s.status, 
+            m.name as food_name, 
+            ol.count, ol.summ,
+            u.email as user_email
+        FROM orders o
+        JOIN order_list ol ON o.id = ol.order
+        JOIN menu m ON ol.food = m.id
+        JOIN users u ON o.user = u.id
+        JOIN order_status s ON o.status = s.id
+        WHERE o.user = %s
+        ORDER BY o.id;
+        """, (user_id,))
     except Exception as ex:
         config.logging.error(ex)
-        
+
 def get_all_orders():
     try:
         return get_data("""
-    SELECT o.id, o.time, o.summa, o.status, ol.food, ol.count, ol.summ
-    FROM orders o
-    JOIN order_list ol ON o.id = ol.order
-    ORDER BY o.id;
-    """)
+        SELECT 
+            o.id, o.time, o.summa, s.status, 
+            m.name as food_name, 
+            ol.count, ol.summ,
+            u.email as user_email
+        FROM orders o
+        JOIN order_list ol ON o.id = ol.order
+        JOIN menu m ON ol.food = m.id
+        JOIN users u ON o.user = u.id
+        JOIN order_status s ON o.status = s.id
+        ORDER BY o.id;
+        """)
     except Exception as ex:
         config.logging.error(ex)

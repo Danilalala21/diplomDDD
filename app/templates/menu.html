@@ -31,7 +31,9 @@
                         <img src="{{ url_for('static', filename='img/' + (menu_item.photo if menu_item.photo else 'card.png')) }}" class='menu-img'>
                     </div>
                     <div class='menu-text'>{{ menu_item.name }}</div>
-                    <div class='menu-price'>{{ menu_item.price }} ₽ - {{ menu_item.rate }} rate</div>
+                    <div class='menu-price'>
+                        {{ menu_item.price }} ₽ - {{ menu_item.rate if menu_item.rate else '0' }} rate
+                    </div>
                     <div class='menu-subtext'>
                         {{ menu_item.description | safe }}
                     </div>

@@ -300,33 +300,37 @@ def profile():
 
 @app.route('/orders')
 @login_required
-@user_check_password
 def orders():
+    # Если пользователь не аутентифицирован, перенаправляем его на страницу входа
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
 
-    if current_user.role == 'admin' or current_user.role == 'staff':
-        orders = db.get_all_orders()  # Function to get all orders for admin
+    # Проверяем роль пользователя и получаем соответствующие данные заказа
+    if current_user.role in ['admin', 'staff']:
+        # Для администраторов и персонала загружаем все заказы
+        orders = db.get_all_orders()
     else:
+        # Для обычных пользователей загружаем только их заказы
         orders = db.get_user_orders(current_user.id)
-        
+
     grouped_orders = {}
     for order in orders:
         if order['id'] not in grouped_orders:
             grouped_orders[order['id']] = {
-                'time': order['time'],
-                'summa': order['summa'],
-                'status': order['status'],
-                'items': []
+                'user_email': order['user_email'],  # Email пользователя, сделавшего заказ
+                'time': order['time'],              # Время заказа
+                'summa': order['summa'],            # Сумма заказа
+                'status': order['status'],          # Статус заказа
+                'items': []                         # Список позиций в заказе
             }
         grouped_orders[order['id']]['items'].append({
-            'food': order['food'],
-            'count': order['count'],
-            'summ': order['summ']
+            'food': order['food_name'],  # Имя блюда вместо ID
+            'count': order['count'],     # Количество заказанного блюда
+            'summ': order['summ']         # Сумма по позиции
         })
 
     return render_template('orders.html', orders=grouped_orders)
-    
+
 
 @app.route('/users')
 @admin_required

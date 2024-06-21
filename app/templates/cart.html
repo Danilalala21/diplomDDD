@@ -153,6 +153,7 @@
         .then(data => {
             if (data.success) {
                 alert('Заказ оформлен');
+                window.location.reload();
             } else {
                 alert('Не удалось оформить заказ: ' + data.message);
             }
